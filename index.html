@@ -453,13 +453,16 @@ function makeWrittenPrompt(t){
     +'Booking: williamston-aesthetics.myaestheticrecord.com\n\n'
     +'--- '+n.toUpperCase()+"'S WRITING VOICE ---\n"
     +'- First person using "I" -- '+n+' is speaking directly to her followers\n'
+    +'- '+n+' and her twin sister '+other+' are both PA-Cs, co-owners, and mothers. These are real dimensions of her life -- when they fit naturally into a post, use them. When they do not fit, leave them out. Never force any of these angles.\n'
+    +'- The twin partnership is a powerful differentiator. When it feels natural, use "we" and "us" to bring that dynamic in. Do not crowbar it into every post.\n'
+    +'- Being a mom and a small business owner in a Mid-Michigan community is relatable to the target audience. If the topic connects to that life authentically, lean into it. If not, skip it.\n'
     +'- Warm, soft, and human -- like a text from a friend who happens to be a PA, not a brand announcement\n'
-    +'- Never corporate, never salesy, never stiff. No buzzwords or marketing language.\n'
-    +'- Short sentences. Real words. The kind of thing you would actually say out loud.\n'
-    +'- Community-focused: patients are neighbors she sees around Williamston\n'
+    +'- Avoid corporate language, buzzwords, and marketing speak. Short sentences and real words work best.\n'
+    +'- Lowercase is fine. Sentence fragments are encouraged for rhythm when they feel natural.\n'
+    +'- When it fits, local Mid-Michigan details make the post feel lived-in -- the weather, Grand River Ave, small-town life. Do not force a local reference if the post does not call for one.\n'
     +'- Philosophy: conservative, natural results -- never overfilled, never frozen\n'
     +'- Never make specific medical outcome guarantees\n'
-    +'- Always mention "Williamston" or "Williamston, MI" somewhere naturally in the caption\n'
+    +'- Try to mention Williamston or Williamston MI somewhere naturally. If it feels forced in a particular caption, it is okay to leave it out of that one.\n'
     +'- DO NOT use em dashes (the long dash character like this: --). Use a comma, a period, or start a new line instead.\n'
     +'- EMOJIS: Follow this exact decision process for every caption independently:\n'
     +'  STEP 1 -- HOW MANY: Randomly choose 0, 1, or 2 emojis for this caption. Some captions must get 0 -- this randomness is intentional and makes the account look natural.\n'
@@ -475,25 +478,30 @@ function makeWrittenPrompt(t){
     +'Topic: '+t.title+'\n'
     +'What to cover: '+t.desc+'\n'
     +'Content inspired by: '+t.source+'\n\n'
+    +'--- STYLE GUIDANCE: AVOID AI CLICHES ---\n'
+    +'Try to avoid phrases that sound like a beauty ad: "In a world where...", "Unlock your glow", "Look no further", "Revolutionize", "Transform", "Journey", "Dive into", "Elevate". These make posts feel generic. When in doubt, ask: would a real person actually text this to a friend? If not, rewrite it.\n'
+    +'Lowercase hooks are fine. Sentence fragments are fine. Real and slightly imperfect beats polished every time.\n\n'
+    +'--- ADDITIONAL STYLE SUGGESTIONS (apply where they fit naturally -- never force any of these) ---\n'
+    +'CONTRACTIONS: Use contractions the way a real person would -- "you\'ll" not "you will", "we\'re" not "we are", "it\'s" not "it is". Formal phrasing creates distance.\n'
+    +'EMPATHY TOWARD PATIENT FEARS: When the topic involves something patients are commonly nervous about -- needles, looking overdone, spending money, judgment -- acknowledge that fear warmly before addressing it. Not as a formula, but when it genuinely fits. Patients respond to feeling understood before being sold to.\n'
+    +'LIGHT HUMOR OR WARMTH: If the topic and tone allow for it, a moment of lightness or gentle humor can make a post feel very human. This works especially well for twin PA content, behind-the-scenes posts, and community content. Never force it and never make it a joke -- just a warmth that makes someone smile.\n'
+    +'ONE PRACTICAL TIP: If the topic naturally calls for it -- a treatment explainer, a skincare education post, a myth-busting post -- one specific practical tip the reader can actually use tends to perform very well. Only include this when it genuinely fits the topic. Do not bolt a tip onto a personal story, a holiday post, or a community post where it does not belong.\n\n'
     +'--- YOUR TASK ---\n'
-    +'Write exactly 3 distinct Instagram captions about "'+t.title+'". Each must be genuinely different in length, opening line, angle, and style. Do NOT write generic Williamston Aesthetics content -- every caption must clearly be about this specific topic.\n\n'
+    +'Write exactly 3 distinct Instagram captions about "'+t.title+'". Each should feel different -- different structure, angle, and energy. Every caption should clearly be about this specific topic, not a generic spa post.\n\n'
     +'CAPTION 1 - SHORT AND PUNCHY (2-3 lines):\n'
-    +'First line is a scroll-stopping hook directly about the topic.\n'
-    +'Second line delivers the key insight.\n'
-    +'Third line: simple CTA (link in bio, DM us, or book via link below).\n\n'
+    +'Consider starting with a question that does not have an obvious yes answer -- something grounded in real life, not a sales setup. A Mid-Michigan reference works well here if it feels natural (weather, seasons, small-town life). Not "Want better skin?" but something like "Is it just me or does this Michigan weather wreck everyone\'s skin by March?" -- but only if that energy fits the topic.\n'
+    +'Second line: the key insight in plain language.\n'
+    +'Third line: a soft specific CTA -- give them a reason, not just "link in bio."\n\n'
     +'CAPTION 2 - WARM AND PERSONAL (one short paragraph):\n'
-    +'This one should feel like '+n+' is sitting across from someone at a coffee shop telling them something real.\n'
-    +'No lists, no bullet energy, no "as a PA I..." opener.\n'
-    +'Just a small personal moment, a patient observation, or something she genuinely thinks about.\n'
-    +'Conversational sentence rhythm. Soft. Maybe a little vulnerable.\n'
-    +'End with a low-pressure question that invites a real reply, not a generic "drop a comment below."\n\n'
-    +'CAPTION 3 - HELPFUL AND CLEAR WITH A CTA (4-5 lines):\n'
-    +'This one teaches something useful but still sounds like a person, not a pamphlet.\n'
-    +'Start with something relatable, not a statistic or a bold claim.\n'
-    +'Keep the education light and conversational -- one or two things, not a full explainer.\n'
-    +"Bring in "+n+"'s PA background naturally, not as a credential flex.\n"
-    +'Mention Williamston, MI.\n'
-    +'End with a warm, specific CTA. Not "link in bio" alone -- give them a reason to click.\n\n'
+    +'Think: Observation or clinic moment → small personal story → soft ask.\n'
+    +'This is the one that should feel most human. If it makes sense for the topic, lean into the twin PA dynamic ("we were literally just talking about this today"), or the mom-and-business-owner reality, or a neighbor-patient moment. Use whichever dimension fits -- do not force any of them.\n'
+    +'No lists, no "as a PA I..." opener, no PR-speak.\n'
+    +'The closing question can be about anything -- a local Williamston spot, something seasonal, a relatable Mid-Michigan moment. Building community comes before booking.\n\n'
+    +'CAPTION 3 - HELPFUL AND CLEAR WITH A SOFT CTA (4-5 lines):\n'
+    +'Think: Relatable observation → one useful thing they probably did not know → PA context woven in → soft ask.\n'
+    +'Grounding it in something specific and lived-in works well here -- a patient moment, a detail from the clinic, a local reference. But only if it fits naturally.\n'
+    +'Keep the education light -- one or two things, not a full explainer.\n'
+    +'End warm. A reason to engage, not a command.\n\n'
     +'--- HASHTAGS ---\n'
     +'For each caption, do the following:\n'
     +'1. Start with this pool of 10 brand hashtags: '+HASHTAGS+'\n'
@@ -607,27 +615,46 @@ function buildPrompt(idx){
 // Robust copy using hidden textarea -- works in all browsers including local file
 function doCopy(){
   const text=S.prompt;
+
+  // Try modern clipboard API first -- no focus/scroll side effects
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>{
+      showCopied(true);
+    }).catch(()=>{
+      legacyCopy(text);
+    });
+    return;
+  }
+  legacyCopy(text);
+}
+
+function legacyCopy(text){
   const ta=document.getElementById('clipboardHelper');
+  const scrollX=window.scrollX;
+  const scrollY=window.scrollY;
   ta.value=text;
   ta.removeAttribute('readonly');
-  ta.focus();
+  ta.style.position='fixed';
+  ta.style.top='50%';
+  ta.style.left='50%';
+  ta.style.opacity='0';
+  ta.focus({preventScroll:true});
   ta.select();
   ta.setSelectionRange(0,text.length);
-
   let success=false;
-  try{
-    success=document.execCommand('copy');
-  }catch(e){}
-
+  try{success=document.execCommand('copy');}catch(e){}
   ta.setAttribute('readonly','');
-  ta.blur();
+  ta.style.position='';
+  ta.style.top='';
+  ta.style.left='';
+  ta.style.opacity='';
+  // Don't blur -- just restore scroll position
+  requestAnimationFrame(()=>{
+    window.scrollTo(scrollX,scrollY);
+  });
+  showCopied(success);}
 
-  // Also try modern API as backup
-  if(!success&&navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(text).catch(()=>{});
-    success=true;
-  }
-
+function showCopied(success){
   const btn=document.getElementById('copybtn');
   if(btn){
     btn.textContent=success?'Copied!':'Select all above and copy manually';
