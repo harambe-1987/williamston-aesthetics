@@ -123,6 +123,7 @@ h1 em{font-style:italic;color:var(--rose);}
   <p class="logo">Williamston Aesthetics</p>
   <h1>Caption <em>Prompt</em> Builder</h1>
   <p class="sub">Fill in the steps below, pick a topic, then copy the AI prompt. Paste it into Claude, ChatGPT, or any AI to get your captions or Reel script.</p>
+  <div style="margin-bottom:1.25rem;"><button onclick="resetAll()" style="font-size:12px;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;border:1.5px solid var(--border);background:transparent;color:var(--muted);transition:background .12s,color .12s;" onmouseover="this.style.background='#EEEAE5';this.style.color='#1C1A19'" onmouseout="this.style.background='transparent';this.style.color='#8A837D'">&#x21BA; Reset / start over</button></div>
   <div id="root"></div>
 </div>
 
@@ -136,14 +137,14 @@ const HOLIDAYS={
   1:[{id:'valentine',label:"Valentine's Day"},{id:'galentine',label:"Galentine's Day"},{id:'presidents',label:"Presidents' Day"}],
   2:[{id:'stpatricks',label:"St. Patrick's Day"},{id:'springrefresh',label:'Spring Refresh'},{id:'firstspring',label:'First Day of Spring'}],
   3:[{id:'easter',label:'Easter'},{id:'earthday',label:'Earth Day'},{id:'weddingbegins',label:'Wedding Season Begins'}],
-  4:[{id:'mothers',label:"Mother's Day"},{id:'memorial',label:'Memorial Day'},{id:'grad',label:'Graduation Season'}],
-  5:[{id:'fathers',label:"Father's Day"},{id:'firstsummer',label:'First Day of Summer'},{id:'pride',label:'Pride Month'},{id:'weddingpeak',label:'Wedding Season Peak'}],
-  6:[{id:'july4',label:'4th of July'},{id:'summerglow',label:'Summer Glow'}],
+  4:[{id:'mothers',label:"Mother's Day"},{id:'memorial',label:'Memorial Day'},{id:'grad',label:'Graduation Season'},{id:'springwaterfest',label:'Spring Water Festival (Williamston)'},{id:'brandnewspring',label:'Brand New Spring Festival (Williamston)'}],
+  5:[{id:'fathers',label:"Father's Day"},{id:'firstsummer',label:'First Day of Summer'},{id:'pride',label:'Pride Month'},{id:'weddingpeak',label:'Wedding Season Peak'},{id:'juneteenth',label:'Juneteenth'},{id:'redcedarjubilee',label:'Red Cedar Jubilee (Williamston)'}],
+  6:[{id:'july4',label:'4th of July'},{id:'summerglow',label:'Summer Glow'},{id:'farmmarket',label:'Farmers Market Season (Williamston)'}],
   7:[{id:'backtoschool',label:'Back to School'},{id:'latesummer',label:'Late Summer Skin Prep'}],
   8:[{id:'laborday',label:'Labor Day'},{id:'fallrefresh',label:'Fall Refresh'},{id:'firstfall',label:'First Day of Fall'}],
   9:[{id:'halloween',label:'Halloween'},{id:'bca',label:'Breast Cancer Awareness'},{id:'sweetestday',label:'Sweetest Day (Michigan!)'}],
-  10:[{id:'veterans',label:'Veterans Day'},{id:'thanksgiving',label:'Thanksgiving'},{id:'holidayprep',label:'Holiday Prep'},{id:'blackfriday',label:'Black Friday'}],
-  11:[{id:'holiday',label:'Holiday Season'},{id:'christmas',label:'Christmas'},{id:'hanukkah',label:'Hanukkah'},{id:'nye',label:"New Year's Eve"},{id:'winterskin2',label:'Winter Skin'}]
+  10:[{id:'veterans',label:'Veterans Day'},{id:'thanksgiving',label:'Thanksgiving'},{id:'holidayprep',label:'Holiday Prep'},{id:'blackfriday',label:'Black Friday'},{id:'dayafterthanksgiving',label:'Day After Thanksgiving (Michigan Holiday)'},{id:'hamsweetholidaze',label:'Ham Sweet Holidaze (Williamston)'}],
+  11:[{id:'holiday',label:'Holiday Season'},{id:'christmas',label:'Christmas'},{id:'christmaseve',label:'Christmas Eve'},{id:'hanukkah',label:'Hanukkah'},{id:'nye',label:"New Year's Eve"},{id:'winterskin2',label:'Winter Skin'}]
 };
 const HANGLES={
   newyear:"MUST reference New Year's directly -- new year new you, fresh start, VIP enrollment.",
@@ -183,7 +184,15 @@ const HANGLES={
   holiday:'Reference holiday season -- gift cards, glow for events, celebration.',
   christmas:"MUST reference Christmas -- gift cards, year-end VIP enrollment.",
   hanukkah:'Reference Hanukkah -- light, confidence, inclusivity.',
-  nye:"MUST reference New Year's Eve -- look your best for the countdown."
+  nye:"MUST reference New Year's Eve -- look your best for the countdown.",
+  springwaterfest:"Reference Williamston's Spring Water Festival in Mineral Spring Park -- community pride, local event, great timing to remind neighbors that Williamston Aesthetics is right here in their community.",
+  brandnewspring:'Reference the Brand New Spring Festival in Williamston -- community event, spring energy, local pride, neighbors gathering downtown on Grand River Ave.',
+  juneteenth:'Reference Juneteenth -- freedom, community, celebration, inclusivity. Everyone deserves to feel confident and free in their own skin.',
+  redcedarjubilee:'MUST reference the Red Cedar Jubilee -- Williamston\'s biggest annual community celebration right on Grand River Ave. Week-long festivities, parades, fireworks. Williamston Aesthetics is right in the heart of this community.',
+  farmmarket:'Reference the Williamston Farm and Artisan Market -- local, community-rooted, supporting small businesses, fresh summer energy. Williamston Aesthetics is a proud local small business too.',
+  dayafterthanksgiving:'Reference the long Thanksgiving weekend -- Michigan gives us both days off. Treat yourself after the holiday, gift cards for holiday shopping, self-care before the December rush.',
+  hamsweetholidaze:'Reference Ham Sweet Holidaze at Hilltop Views Farm in Williamston -- local holiday event, community warmth, gift cards, treating yourself and others before the holidays.',
+  christmaseve:'MUST reference Christmas Eve -- last chance for holiday gift cards, final self-care before the big day, cozy festive Williamston energy.'
 };
 
 const TOPIC_SETS=[
@@ -452,7 +461,14 @@ function makeWrittenPrompt(t){
     +'- Never make specific medical outcome guarantees\n'
     +'- Always mention "Williamston" or "Williamston, MI" somewhere naturally in the caption\n'
     +'- DO NOT use em dashes (the long dash character like this: --). Use a comma, a period, or start a new line instead.\n'
-    +'- EMOJIS: For each caption independently, randomly decide to use 0, 1, or 2 emojis. Some captions should have none at all. This randomness is intentional -- it makes the account look natural and human rather than formulaic. When you do use one, choose only from this set: 💉 ✨ 🌿 💗 📍 🙋 💆 👩‍⚕️ 🫶. Never cluster emojis together. Never put one in the middle of a sentence. Best placed at the end of the hook line or the CTA line.'
+    +'- EMOJIS: Follow this exact decision process for every caption independently:\n'
+    +'  STEP 1 -- HOW MANY: Randomly choose 0, 1, or 2 emojis for this caption. Some captions must get 0 -- this randomness is intentional and makes the account look natural.\n'
+    +'  STEP 2 -- IF 0: No emojis anywhere in the caption. Done.\n'
+    +'  STEP 3 -- IF 1: Randomly choose which group to draw from -- either the MEDICAL group OR the SEASONAL group (not both). Then place one emoji from that group on the most relevant line.\n'
+    +'  STEP 4 -- IF 2: Place one emoji from the MEDICAL group on the most relevant medical/treatment line, AND one emoji from the SEASONAL group on the most relevant holiday/seasonal line. One from each group, never two from the same group.\n'
+    +'  MEDICAL EMOJI GROUP (use only on lines about Botox, filler, microneedling, VI Peel, injections, PA, treatment, skin, or results): 💉 ✨ 🧖 📍 🤝 💗 -- when using a medical emoji, pick randomly from this list, do not default to the same one every time.\n'
+    +'  SEASONAL EMOJI GROUP (use only on lines explicitly about a holiday or seasonal event): spring/Easter 🌸, spring festivals 🌷, summer ☀️, fall 🍂, winter ❄️, Christmas 🎄, Halloween 🎃, Thanksgiving 🦃, Valentine\'s Day ❤️, 4th of July or Jubilee 🎆, farmers market 🌻\n'
+    +'  HARD RULES: Never use a seasonal emoji on a medical line. Never use a medical emoji on a seasonal line. Never use the same emoji twice anywhere across all 3 captions -- every emoji used must be unique. Never cluster two emojis together. Never place an emoji mid-sentence. One emoji per line maximum. When in doubt use nothing.'
     +holSection+'\n\n'
     +'--- POST DETAILS ---\n'
     +'Month: '+mn+'\n'
@@ -531,7 +547,14 @@ function makeVideoPrompt(t){
     +'- Community-focused: she knows her patients personally in Williamston\n'
     +'- Never make specific medical outcome guarantees\n'
     +'- DO NOT use em dashes (the long dash character). Use a comma, a period, or a pause instead.\n'
-    +'- EMOJIS: In the caption field only, randomly decide to use 0, 1, or 2 emojis. Sometimes use none at all -- this randomness makes the account look natural and human rather than formulaic. When you do use one, choose only from this set: 💉 ✨ 🌿 💗 📍 🙋 💆 👩‍⚕️ 🫶. Never cluster them. Do not use emojis in the spoken script or on-screen text overlays.'
+    +'- EMOJIS (caption field only -- never in script or on-screen text): Follow this exact decision process:\n'
+    +'  STEP 1 -- HOW MANY: Randomly choose 0, 1, or 2 emojis for this caption. Some captions must get 0 -- this randomness is intentional and makes the account look natural.\n'
+    +'  STEP 2 -- IF 0: No emojis anywhere in the caption. Done.\n'
+    +'  STEP 3 -- IF 1: Randomly choose which group to draw from -- either the MEDICAL group OR the SEASONAL group (not both). Then place one emoji from that group on the most relevant line.\n'
+    +'  STEP 4 -- IF 2: Place one emoji from the MEDICAL group on the most relevant medical/treatment line, AND one emoji from the SEASONAL group on the most relevant holiday/seasonal line. One from each group, never two from the same group.\n'
+    +'  MEDICAL EMOJI GROUP (use only on lines about Botox, filler, microneedling, VI Peel, injections, PA, treatment, skin, or results): 💉 ✨ 🧖 📍 🤝 💗 -- when using a medical emoji, pick randomly from this list, do not default to the same one every time.\n'
+    +'  SEASONAL EMOJI GROUP (use only on lines explicitly about a holiday or seasonal event): spring/Easter 🌸, spring festivals 🌷, summer ☀️, fall 🍂, winter ❄️, Christmas 🎄, Halloween 🎃, Thanksgiving 🦃, Valentine\'s Day ❤️, 4th of July or Jubilee 🎆, farmers market 🌻\n'
+    +'  HARD RULES: Never use a seasonal emoji on a medical line. Never use a medical emoji on a seasonal line. Never use the same emoji twice anywhere in the caption -- every emoji used must be unique. Never cluster two emojis. Never mid-sentence. One emoji per line maximum. When in doubt use nothing.'
     +holSection+'\n\n'
     +'--- REEL DETAILS ---\n'
     +'Month: '+mn+'\n'
@@ -630,7 +653,31 @@ function setType(t){S.postType=t;render();}
 function rotate(){S.setIdx=(S.setIdx+1)%TOPIC_SETS.length;render();}
 function goBack(){S.prompt=null;S.selectedTopic=null;render();}
 function resetAll(){S.author=null;S.month=new Date().getMonth();S.holiday=null;S.postType=null;S.prompt=null;S.selectedTopic=null;S.freeText='';render();window.scrollTo({top:0,behavior:'smooth'});}
-function buildFreePrompt(){const txt=(S.freeText||'').trim();if(!txt)return;const t={title:txt,desc:'This is a custom topic entered by '+( S.author==='laura'?'Laura':'Elizabeth')+': '+txt,source:'Custom entry'};S.selectedTopic=txt;S.prompt=S.postType==='video'?makeVideoPrompt(t):makeWrittenPrompt(t);render();window.scrollTo({top:0,behavior:'smooth'});}
+function buildFreePrompt(){
+  const txt=(S.freeText||'').trim();
+  if(!txt){
+    const ta=document.getElementById('freeTextInput');
+    if(ta){
+      ta.style.border='2px solid #C45C7A';
+      ta.style.background='#FFF0F4';
+      ta.placeholder='Type your topic above before building a prompt...';
+      ta.focus();
+      setTimeout(()=>{
+        if(ta){
+          ta.style.border='1.5px solid var(--rose)';
+          ta.style.background='white';
+          ta.placeholder='e.g. 20% off VI Peels this month, Easter weekend promo, new patient special...';
+        }
+      },2500);
+    }
+    return;
+  }
+  const t={title:txt,desc:'This is a custom topic entered by '+(S.author==='laura'?'Laura':'Elizabeth')+': '+txt,source:'Custom entry'};
+  S.selectedTopic=txt;
+  S.prompt=S.postType==='video'?makeVideoPrompt(t):makeWrittenPrompt(t);
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 
 render();
 </script>
