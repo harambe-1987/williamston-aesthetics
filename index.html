@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Williamston Aesthetics — Caption Prompt Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FAF8F4;
+  --warm-white:#FFFEF9;
+  --blush:#EDCACA;
+  --rose:#C45C7A;
+  --rose-dark:#9A3A58;
+  --rose-light:#F9EDF1;
+  --charcoal:#1C1A19;
+  --mid:#4A4542;
+  --muted:#8A837D;
+  --border:#E2DDD8;
+  --border-light:#EEEAE5;
+  --green:#0F6E56;
+  --blue:#2A6DB5;
+  --blue-light:#EBF3FB;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--charcoal);min-height:100vh;padding:2.5rem 1.25rem 5rem;}
+.app{max-width:660px;margin:0 auto;}
+.logo{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;}
+h1{font-family:'DM Serif Display',serif;font-size:26px;color:var(--charcoal);line-height:1.25;margin-bottom:.5rem;}
+h1 em{font-style:italic;color:var(--rose);}
+.sub{font-size:13.5px;color:var(--muted);line-height:1.7;margin-bottom:2rem;max-width:520px;}
+.step-block{margin-bottom:1.75rem;}
+.slabel{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;display:block;}
+.step-locked{opacity:.35;pointer-events:none;}
+.who-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.wcard{background:var(--warm-white);border:1.5px solid var(--border);border-radius:14px;padding:15px 18px;cursor:pointer;display:flex;align-items:center;gap:12px;position:relative;transition:border-color .15s,background .15s;}
+.wcard:hover{border-color:var(--rose);background:var(--rose-light);}
+.wcard.sel{border-color:var(--rose);border-width:2px;background:var(--rose-light);}
+.wavatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:16px;flex-shrink:0;background:var(--blush);color:var(--rose-dark);}
+.wcard.sel .wavatar{background:var(--rose);color:white;}
+.wname{font-size:14px;font-weight:600;color:var(--charcoal);}
+.wcard.sel .wname{color:var(--rose-dark);}
+.wsub{font-size:11.5px;color:var(--muted);margin-top:1px;}
+.wck{position:absolute;top:9px;right:9px;}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:.5rem;}
+.chip{font-size:12.5px;padding:6px 13px;border-radius:20px;cursor:pointer;border:1.5px solid var(--border);background:var(--warm-white);color:var(--mid);font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:5px;transition:border-color .12s,background .12s;}
+.chip:hover{border-color:var(--rose);background:var(--rose-light);}
+.chip.sel-m{background:var(--rose);color:white;border-color:var(--rose);font-weight:600;}
+.chip.sel-h{background:var(--rose-light);color:var(--rose-dark);border-color:var(--rose);font-weight:600;}
+.chip.noh{border-style:dashed;}
+.chip.noh.sel-m{border-style:solid;}
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.type-card{background:var(--warm-white);border:1.5px solid var(--border);border-radius:14px;padding:15px 18px;cursor:pointer;display:flex;align-items:center;gap:13px;position:relative;transition:border-color .15s,background .15s;}
+.type-card:hover{border-color:var(--rose);background:var(--rose-light);}
+.type-card.sel-w{border-color:var(--rose);border-width:2px;background:var(--rose-light);}
+.type-card.sel-v{border-color:var(--blue);border-width:2px;background:var(--blue-light);}
+.type-icon{font-size:22px;flex-shrink:0;}
+.type-name{font-size:14px;font-weight:600;color:var(--charcoal);}
+.type-card.sel-w .type-name{color:var(--rose-dark);}
+.type-card.sel-v .type-name{color:var(--blue);}
+.type-desc{font-size:11.5px;color:var(--muted);margin-top:2px;line-height:1.4;}
+.type-ck{position:absolute;top:9px;right:9px;}
+.topic-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem;}
+.topic-header-left{display:flex;flex-direction:column;gap:2px;}
+.set-label{font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);}
+.refresh-btn{font-size:12px;padding:6px 13px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;border:1.5px solid var(--border);background:var(--warm-white);color:var(--mid);font-weight:500;transition:background .12s;display:inline-flex;align-items:center;gap:5px;}
+.refresh-btn:hover{background:var(--border-light);}
+.source-pill{font-size:11px;color:var(--muted);background:var(--warm-white);border:1px solid var(--border-light);border-radius:20px;padding:5px 12px;margin-bottom:.85rem;display:inline-block;line-height:1.5;}
+.topic-list{display:flex;flex-direction:column;gap:8px;}
+.tcard{background:var(--warm-white);border:1.5px solid var(--border);border-radius:13px;padding:13px 15px;display:flex;align-items:flex-start;gap:12px;}
+.tcard:hover{border-color:#C8B8C2;}
+.tnum{font-family:'DM Serif Display',serif;font-size:16px;color:var(--blush);min-width:20px;flex-shrink:0;padding-top:1px;}
+.tbody{flex:1;}
+.ttitle{font-size:13.5px;font-weight:600;color:var(--charcoal);margin-bottom:3px;line-height:1.4;}
+.tdesc{font-size:12.5px;color:var(--mid);line-height:1.6;}
+.tsource{font-size:11px;color:var(--muted);margin-top:4px;font-style:italic;}
+.use-btn{margin-top:8px;font-size:12px;padding:5px 12px;border-radius:7px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;border:1.5px solid var(--rose);background:transparent;color:var(--rose);transition:background .12s,color .12s;}
+.use-btn:hover{background:var(--rose);color:white;}
+.use-btn.video{border-color:var(--blue);color:var(--blue);}
+.use-btn.video:hover{background:var(--blue);color:white;}
+.locked-msg{font-size:13px;color:var(--muted);background:var(--warm-white);border:1px solid var(--border-light);border-radius:12px;padding:13px 16px;text-align:center;}
+.divider{height:1px;background:var(--border);margin:1.75rem 0;}
+.prompt-back{font-size:12.5px;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;gap:5px;margin-bottom:1rem;background:none;border:none;font-family:'DM Sans',sans-serif;padding:0;}
+.prompt-back:hover{color:var(--charcoal);}
+.prompt-meta{margin-bottom:1rem;}
+.prompt-label{font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.prompt-name{font-family:'DM Serif Display',serif;font-size:20px;color:var(--charcoal);line-height:1.3;}
+.prompt-type-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;margin-top:6px;}
+.prompt-type-badge.written{background:var(--rose-light);color:var(--rose-dark);}
+.prompt-type-badge.video{background:var(--blue-light);color:var(--blue);}
+.copy-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.copy-btn{font-size:13px;padding:10px 20px;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;color:white;border:none;display:inline-flex;align-items:center;gap:7px;transition:background .12s;}
+.copy-btn.written{background:var(--rose);}
+.copy-btn.written:hover{background:var(--rose-dark);}
+.copy-btn.video{background:var(--blue);}
+.copy-btn.video:hover{background:#1e5490;}
+.copy-btn.copied{background:var(--green) !important;}
+.copy-hint{font-size:12px;color:var(--muted);}
+/* The prompt display box - just for reading, not what gets copied */
+.prompt-box{background:var(--charcoal);color:#E8E4DE;font-family:'DM Sans',sans-serif;font-size:12.5px;line-height:1.8;border-radius:14px;padding:20px 22px;white-space:pre-wrap;word-break:break-word;margin-bottom:10px;-webkit-user-select:text;user-select:text;}
+/* Hidden textarea used ONLY for clipboard copy - never visible */
+#clipboardHelper{position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;}
+.prompt-note{font-size:12px;color:var(--muted);background:var(--warm-white);border:1px solid var(--border-light);border-radius:10px;padding:10px 13px;line-height:1.65;}
+.prompt-note strong{color:var(--mid);font-weight:600;}
+.hol-note{font-size:12px;color:var(--rose-dark);background:var(--rose-light);border-radius:8px;padding:8px 11px;margin-top:8px;line-height:1.5;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fade{animation:fadeUp .25s ease forwards;}
+</style>
+</head>
+<body>
+<div class="app">
+  <p class="logo">Williamston Aesthetics</p>
+  <h1>Caption <em>Prompt</em> Builder</h1>
+  <p class="sub">Fill in the steps below, pick a topic, then copy the AI prompt. Paste it into Claude, ChatGPT, or any AI to get your captions or Reel script.</p>
+  <div id="root"></div>
+</div>
+
+<!-- Hidden textarea for reliable clipboard copy -->
+<textarea id="clipboardHelper" tabindex="-1" aria-hidden="true" readonly></textarea>
+
+<script>
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const HOLIDAYS={
+  0:[{id:'newyear',label:"New Year's Day"},{id:'mlk',label:'MLK Day'},{id:'winterskin',label:'Winter Skin Reset'}],
+  1:[{id:'valentine',label:"Valentine's Day"},{id:'galentine',label:"Galentine's Day"},{id:'presidents',label:"Presidents' Day"}],
+  2:[{id:'stpatricks',label:"St. Patrick's Day"},{id:'springrefresh',label:'Spring Refresh'},{id:'firstspring',label:'First Day of Spring'}],
+  3:[{id:'easter',label:'Easter'},{id:'earthday',label:'Earth Day'},{id:'weddingbegins',label:'Wedding Season Begins'}],
+  4:[{id:'mothers',label:"Mother's Day"},{id:'memorial',label:'Memorial Day'},{id:'grad',label:'Graduation Season'}],
+  5:[{id:'fathers',label:"Father's Day"},{id:'firstsummer',label:'First Day of Summer'},{id:'pride',label:'Pride Month'},{id:'weddingpeak',label:'Wedding Season Peak'}],
+  6:[{id:'july4',label:'4th of July'},{id:'summerglow',label:'Summer Glow'}],
+  7:[{id:'backtoschool',label:'Back to School'},{id:'latesummer',label:'Late Summer Skin Prep'}],
+  8:[{id:'laborday',label:'Labor Day'},{id:'fallrefresh',label:'Fall Refresh'},{id:'firstfall',label:'First Day of Fall'}],
+  9:[{id:'halloween',label:'Halloween'},{id:'bca',label:'Breast Cancer Awareness'},{id:'sweetestday',label:'Sweetest Day (Michigan!)'}],
+  10:[{id:'veterans',label:'Veterans Day'},{id:'thanksgiving',label:'Thanksgiving'},{id:'holidayprep',label:'Holiday Prep'},{id:'blackfriday',label:'Black Friday'}],
+  11:[{id:'holiday',label:'Holiday Season'},{id:'christmas',label:'Christmas'},{id:'hanukkah',label:'Hanukkah'},{id:'nye',label:"New Year's Eve"},{id:'winterskin2',label:'Winter Skin'}]
+};
+const HANGLES={
+  newyear:"MUST reference New Year's directly -- new year new you, fresh start, VIP enrollment.",
+  mlk:'Reference MLK Day -- community, service, inclusion, giving back.',
+  winterskin:'MUST reference winter skin -- dryness, dullness, VI peel, deep hydration.',
+  winterskin2:'MUST reference winter skin -- dryness, dullness, VI peel, deep hydration.',
+  valentine:"MUST reference Valentine's Day -- treat yourself, self-love, gift cards.",
+  galentine:"MUST reference Galentine's Day -- girlfriends, fun group Botox party.",
+  presidents:"Reference Presidents' Day weekend -- treat yourself, self-care.",
+  stpatricks:"MUST reference St. Patrick's Day -- use a lucky pun or green/luck angle.",
+  springrefresh:'Reference spring -- shed winter skin, renewal, prep for warmer months.',
+  firstspring:'Reference the first day of spring -- renewal, fresh start, new routine.',
+  easter:"MUST reference Easter directly -- spring renewal, brightness, fresh look, new beginnings.",
+  earthday:'Reference Earth Day -- clean beauty, natural results, less-is-more.',
+  weddingbegins:'Reference wedding season starting -- bridal prep, book ahead.',
+  mothers:"MUST reference Mother's Day -- gift cards, treat mom, self-care as a gift.",
+  memorial:'Reference Memorial Day -- summer starting, pre-summer skin prep.',
+  grad:'Reference graduation season -- new chapter, confidence, treat yourself.',
+  fathers:"Reference Father's Day -- gift cards, couples, treat someone you love.",
+  firstsummer:'Reference first day of summer -- summer glow, confidence, skin health.',
+  pride:'Reference Pride Month -- inclusivity, everyone deserves to feel their best.',
+  weddingpeak:'Reference peak wedding season -- bridal party bookings.',
+  july4:"MUST reference 4th of July -- use a red white and glow pun or Independence Day angle.",
+  summerglow:'Reference summer glow -- skin health in the heat, confidence.',
+  backtoschool:"Reference back to school -- back to yourself, fall refresh, self-care.",
+  latesummer:'Reference late summer -- undo sun damage, prep for fall treatments.',
+  laborday:'Reference Labor Day -- end of summer, treat yourself.',
+  fallrefresh:'MUST reference fall -- skin reset after summer, autumn renewal.',
+  firstfall:'Reference first day of fall -- new season, new skin routine.',
+  halloween:"MUST reference Halloween -- treat yourself or scary-good results pun.",
+  bca:'Reference Breast Cancer Awareness Month -- community, self-care, pink.',
+  sweetestday:"Reference Sweetest Day -- Michigan's romantic holiday, gift cards.",
+  veterans:'Reference Veterans Day -- gratitude, community, honoring service.',
+  thanksgiving:"MUST reference Thanksgiving -- grateful for Williamston community.",
+  holidayprep:'Reference holiday season -- Botox timing before events, glow prep.',
+  blackfriday:"MUST reference Black Friday -- VIP enrollment deal, gift cards.",
+  holiday:'Reference holiday season -- gift cards, glow for events, celebration.',
+  christmas:"MUST reference Christmas -- gift cards, year-end VIP enrollment.",
+  hanukkah:'Reference Hanukkah -- light, confidence, inclusivity.',
+  nye:"MUST reference New Year's Eve -- look your best for the countdown."
+};
+
+const TOPIC_SETS=[
+  [
+    {title:"Preventative Botox in your late 20s",desc:"Why more patients are starting before lines form rather than waiting to correct them. Starting conservatively early means less product needed long-term.",source:"@californiacosmetics, @theaestheticmethod"},
+    {title:"What natural lip filler actually looks like",desc:"The #1 fear about filler is looking overdone. Show what conservative, PA-placed filler looks like vs the puffy results people dread.",source:"@beautyboostmedspa, @alta.medispa"},
+    {title:"Facial balancing vs just treating one area",desc:"Treating just the forehead or just the lips in isolation creates imbalance. Full-face proportion is what makes results look effortless.",source:"@theaestheticmethod"},
+    {title:"How long does Botox really last? The honest answer",desc:"The honest answer varies by person, muscle strength, and treatment area -- most patients are never told this upfront.",source:"Top trending patient search question"},
+    {title:"Why your PA credentials matter at the needle",desc:"With news about unqualified injectors, patients are asking harder questions. Your PA-C clinical training is a genuine differentiator.",source:"National news trend -- med spa safety"},
+    {title:"Spring skin reset: why now is ideal for a VI Peel",desc:"Post-winter skin is dull and uneven, and spring sun hasn't arrived yet -- the perfect window for a peel with real recovery time.",source:"Seasonal trend, @beautyboostmedspa"},
+    {title:"What actually happens at a Botox party",desc:"Walk through the real experience -- host perks, group atmosphere, what treatments are available. Most people have never been to one.",source:"@toptierwellnessandbeauty"},
+    {title:"VIP membership -- the real math on what you save",desc:"Show the actual dollar savings at average Botox usage. Transparency-based pricing content builds trust and drives enrollments.",source:"@californiacosmetics membership model"},
+    {title:"Microneedling: what to expect week by week",desc:"Setting realistic expectations is the biggest trust-builder. A week-by-week healing timeline turns curious patients into booked ones.",source:"@purebeauty.medspa, @theaestheticmethod"},
+    {title:"Being a twin PA in a small town",desc:"Your patients are your neighbors -- you see them around Williamston. That accountability separates small-town PA care from a chain medspa.",source:"Owner personality -- top format across MI accounts"}
+  ],
+  [
+    {title:"The biggest Botox myth I hear every week",desc:"'It'll make me look frozen' is the #1 objection. Bust it with the clinical truth about how neuromodulators work when dosed correctly.",source:"@theaestheticmethod, @toptierwellnessandbeauty"},
+    {title:"Filler dissolving is more common than you think",desc:"The trend of dissolving overfilled results is everywhere. Position your conservative approach as the reason you rarely need to correct.",source:"@alta.medispa, national trend 2025-2026"},
+    {title:"What 'natural results' actually means clinically",desc:"Patients say they want natural but don't know what to ask for. Educate them on conservative dosing and facial mapping in practice.",source:"@beautyboostmedspa, @californiacosmetics"},
+    {title:"Why I never treat without a full face assessment",desc:"Explain your consultation process and why you look at the whole face before touching anything. This separates PAs from volume-based injectors.",source:"@theaestheticmethod"},
+    {title:"Botox for migraines -- a question I get constantly",desc:"Many patients don't know Botox has medical uses beyond wrinkles. Educational crossover content performs very well for saves and shares.",source:"Trending patient question, @purebeauty.medspa"},
+    {title:"The truth about cheap Botox deals",desc:"$7/unit deals exist -- here's what patients need to know about product dilution, unlicensed providers, and why price isn't the only metric.",source:"National safety news trend"},
+    {title:"What happens to filler over time",desc:"Most patients don't know filler metabolizes. Explaining the long-term biology of hyaluronic acid builds confidence and sets expectations.",source:"@alta.medispa, @californiacosmetics"},
+    {title:"Why I became a PA instead of taking a shorter path",desc:"The PA training path is longer and broader -- explain what that means clinically and why it matters for the person holding the needle.",source:"Owner education content, @theaestheticmethod"},
+    {title:"Skincare products that work with your injectables",desc:"What to use and avoid before and after treatment. Product education posts tied to services consistently drive saves.",source:"@beautyboostmedspa, @purebeauty.medspa"},
+    {title:"Botox vs Dysport vs Daxxify -- what's the difference",desc:"Patients are increasingly asking about alternatives by name. A simple breakdown positions you as the knowledgeable, trusted go-to.",source:"@aestheticrx Novi MI, trending patient searches"}
+  ],
+  [
+    {title:"Why we opened Williamston Aesthetics here specifically",desc:"The story of choosing a small community over a larger market. Authenticity about your local roots is one of the highest-performing content formats.",source:"Owner story content -- top format nationally"},
+    {title:"A day in our clinic from open to close",desc:"Behind the scenes of a real day -- setup, consultations, treatments, end of day. Candid clinic content outperforms polished posts.",source:"@theaestheticmethod, @toptierwellnessandbeauty"},
+    {title:"What being twins means for our patients",desc:"Two PAs who trained together, challenge each other, and consult on complex cases. The twin angle is your most unique differentiator.",source:"Unique to Williamston Aesthetics"},
+    {title:"What I tell every nervous first-time patient",desc:"The exact things you say to settle anxiety and set expectations before treatment. This reassurance content converts undecided patients.",source:"@theaestheticmethod, @toptierwellnessandbeauty"},
+    {title:"Why I went back to school to become a PA",desc:"Origin story content -- why you chose PA over other paths -- builds deep personal connection with your audience.",source:"Owner background content trend"},
+    {title:"Our treatment room: what you will see when you arrive",desc:"Demystify the experience. Show the room, the tools, the lighting. First-timers convert better when their anxiety is removed upfront.",source:"@californiacosmetics, @toptierwellnessandbeauty"},
+    {title:"The patient feedback that still makes me smile",desc:"Share a general piece of feedback that captures why you do this work. Gratitude posts drive saves and profile visits.",source:"@purebeauty.medspa, @beautyfusionaesthetics"},
+    {title:"Spring in Williamston -- what I'm looking forward to",desc:"Local seasonal content that ties the community to your practice. Patients who feel like they know you book more readily.",source:"Local community content -- strong performer for small-town accounts"},
+    {title:"Why I always start with less than you think you need",desc:"Explain your conservative-first philosophy. Patients who understand your approach before booking arrive with better expectations.",source:"@alta.medispa, @theaestheticmethod"},
+    {title:"A patient who was nervous her very first time",desc:"Without identifying anyone, share the emotional arc of a nervous first-timer. Empathy content generates the highest comment engagement.",source:"@theaestheticmethod, @beautyboostmedspa"}
+  ],
+  [
+    {title:"Who is a good candidate for their first Botox",desc:"A checklist-style post answering 'am I ready?' Removes the final barrier for patients who have been thinking about it but haven't booked.",source:"@californiacosmetics, @beautyboostmedspa"},
+    {title:"How far in advance to book before a big event",desc:"Weddings, reunions, graduations -- give patients a real timeline. Practical advice content gets saved and shared more than almost anything.",source:"@toptierwellnessandbeauty, @theaestheticmethod"},
+    {title:"Our VIP members get $10/unit -- here's how it works",desc:"A clear, simple explanation of the VIP program with the actual savings math. Price transparency builds trust and drives sign-ups.",source:"Williamston Aesthetics -- underposted"},
+    {title:"What you can expect at a free consultation",desc:"Remove the fear of the first step. Walk through exactly what happens -- no obligation, no pressure, just an honest conversation.",source:"@theaestheticmethod, @purebeauty.medspa"},
+    {title:"3 treatments that pair really well together",desc:"Botox + VI Peel, microneedling + skincare -- show patients what combining services looks like and why it produces better results.",source:"@californiacosmetics, @alta.medispa"},
+    {title:"Gift cards -- give someone the gift of feeling great",desc:"Simple, direct gift card post for any upcoming occasion. Gift card content consistently outperforms on saves and DMs.",source:"@toptierwellnessandbeauty, @beautyfusionaesthetics"},
+    {title:"What our new patient intake actually looks like",desc:"Walk through the forms, the consultation, the questions -- demystify the first visit and reduce no-shows from anxious new patients.",source:"@theaestheticmethod intake content"},
+    {title:"Why we don't rush appointments",desc:"Quality positioning. We don't rush -- and this is why your results look different from a high-volume clinic.",source:"Boutique positioning trend, @alta.medispa"},
+    {title:"Summer is closer than you think -- book your skin prep now",desc:"Forward-book messaging for summer events and outdoor season. Urgency without pressure is a top-performing seasonal framing.",source:"Seasonal forward-booking trend"},
+    {title:"Hosting a Botox party for your friend group",desc:"Everything someone needs to know to book a group event -- group size, host perks, what's included, how to inquire.",source:"@toptierwellnessandbeauty, local event content"}
+  ]
+];
+
+const HASHTAGS='#botox #medspami #williamstonmi #naturalresults #michiganmedspa #skincare #twinpas #aesthetics #williamstonaesthetics #botoxwilliamston';
+const SOURCES='@californiacosmetics (302K) - @beautyboostmedspa (93K) - @alta.medispa (78K) - @tribecamedspa (33K) - @theaestheticmethod (26K) - @toptierwellnessandbeauty (16K) - @purebeauty.medspa (10K) - @beautyfusionaesthetics (3.4K) - @topbodydetroit (3.1K)';
+
+function getHolLabel(id){
+  for(const arr of Object.values(HOLIDAYS)){
+    const h=arr.find(x=>x.id===id);
+    if(h)return h.label;
+  }
+  return '';
+}
+
+let S={
+  author:null,
+  month:new Date().getMonth(),
+  holiday:null,
+  postType:null,
+  freeText:'',
+  setIdx:0,
+  prompt:null,
+  selectedTopic:null
+};
+
+function ck(color){
+  const c=color||'#C45C7A';
+  return `<svg style="width:20px;height:20px;display:block;" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9.5" fill="${c}"/><path d="M5.5 10l3 3 6-6" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+function ck16(color){
+  const c=color||'#C45C7A';
+  return `<svg style="width:16px;height:16px;display:block;" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" fill="${c}"/><path d="M4.5 8l2.5 2.5 4.5-4.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+
+function render(){document.getElementById('root').innerHTML=buildUI();}
+
+function buildUI(){
+  const step1=`
+    <div class="step-block">
+      <span class="slabel">Step 1 -- Who is writing this post?</span>
+      <div class="who-grid">
+        <div class="wcard${S.author==='laura'?' sel':''}" onclick="pick('laura')">
+          ${S.author==='laura'?`<div class="wck">${ck()}</div>`:''}
+          <div class="wavatar">L</div>
+          <div><div class="wname">Laura</div><div class="wsub">PA-C, co-owner</div></div>
+        </div>
+        <div class="wcard${S.author==='elizabeth'?' sel':''}" onclick="pick('elizabeth')">
+          ${S.author==='elizabeth'?`<div class="wck">${ck()}</div>`:''}
+          <div class="wavatar">E</div>
+          <div><div class="wname">Elizabeth</div><div class="wsub">PA-C, co-owner</div></div>
+        </div>
+      </div>
+    </div>`;
+
+  const monthChips=MONTHS.map((m,i)=>{
+    const sel=S.month===i;
+    return `<button class="chip${sel?' sel-m':''}" onclick="setMonth(${i})">${m}${sel?' '+ck16('white'):''}</button>`;
+  }).join('');
+
+  const hols=(HOLIDAYS[S.month]||[]).map(h=>{
+    const sel=S.holiday===h.id;
+    return `<button class="chip${sel?' sel-h':''}" onclick="setHol('${h.id}')">${h.label}${sel?' '+ck16('#9A3A58'):''}</button>`;
+  }).join('');
+  const noHolSel=S.holiday==='none';
+
+  const step2=`
+    <div class="step-block${S.author?'':' step-locked'}">
+      <span class="slabel">Step 2 -- Month and seasonal angle</span>
+      <div style="margin-bottom:.75rem;">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:7px;font-weight:500;">Which month?</div>
+        <div class="chips">${monthChips}</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:7px;font-weight:500;">Holiday or seasonal angle? <span style="font-weight:400;">(optional)</span></div>
+        <div class="chips">
+          <button class="chip noh${noHolSel?' sel-m':''}" onclick="setHol('none')">No holiday${noHolSel?' '+ck16('white'):''}</button>
+          ${hols}
+        </div>
+        ${S.holiday&&S.holiday!=='none'?`<div class="hol-note"><strong>${getHolLabel(S.holiday)}</strong> -- this angle will be baked into your prompt.</div>`:''}
+      </div>
+    </div>`;
+
+  const step3=`
+    <div class="step-block${S.author?'':' step-locked'}">
+      <span class="slabel">Step 3 -- What type of post?</span>
+      <div class="type-grid">
+        <div class="type-card${S.postType==='written'?' sel-w':''}" onclick="setType('written')">
+          ${S.postType==='written'?`<div class="type-ck">${ck()}</div>`:''}
+          <div class="type-icon">&#x270D;&#xFE0F;</div>
+          <div>
+            <div class="type-name">Written post</div>
+            <div class="type-desc">Caption + hashtags + Stories idea</div>
+          </div>
+        </div>
+        <div class="type-card${S.postType==='video'?' sel-v':''}" onclick="setType('video')">
+          ${S.postType==='video'?`<div class="type-ck">${ck('#2A6DB5')}</div>`:''}
+          <div class="type-icon">&#x1F3AC;</div>
+          <div>
+            <div class="type-name">Video / Reel</div>
+            <div class="type-desc">Hook + script + on-screen text</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  if(S.prompt) return step1+step2+step3+buildPromptUI();
+
+  const canSeeTopic=S.author&&S.postType;
+  const topics=TOPIC_SETS[S.setIdx];
+  const setLetters=['A','B','C','D'];
+  const isVideo=S.postType==='video';
+
+  const freeCard=canSeeTopic?`
+    <div class="tcard" style="border-style:dashed;border-color:var(--rose);background:var(--rose-light);">
+      <div class="tnum" style="font-size:18px;padding-top:0;">&#x270E;</div>
+      <div class="tbody">
+        <div class="ttitle">Write your own topic</div>
+        <div class="tdesc" style="color:var(--mid);">Deals, promos, new patient specials, events, announcements -- anything not in the list below.</div>
+        <textarea id="freeTextInput" placeholder="e.g. 20% off VI Peels this month, Easter weekend promo, new patient special..." oninput="S.freeText=this.value" style="width:100%;margin-top:9px;font-size:13px;padding:9px 10px;border:1.5px solid var(--rose);border-radius:8px;font-family:'DM Sans',sans-serif;background:white;color:var(--charcoal);resize:vertical;min-height:64px;line-height:1.5;outline:none;"></textarea>
+        <button class="use-btn${isVideo?' video':''}" style="margin-top:8px;" onclick="buildFreePrompt()">
+          ${isVideo?'Build script prompt &rarr;':'Build caption prompt &rarr;'}
+        </button>
+      </div>
+    </div>`:'';
+
+  const step4=`
+    <div class="step-block${canSeeTopic?'':' step-locked'}">
+      <div class="topic-header">
+        <div class="topic-header-left">
+          <span class="set-label">Topic set ${setLetters[S.setIdx]} of 4</span>
+          <span class="slabel" style="margin:0;">Step 4 -- Pick a topic</span>
+        </div>
+        <button class="refresh-btn" onclick="rotate()">&#x21BB; Different topics</button>
+      </div>
+      <div class="source-pill">Based on: ${SOURCES}</div>
+      ${canSeeTopic ? `
+      <div class="topic-list fade">
+        ${freeCard}
+        ${topics.map((t,i)=>`
+          <div class="tcard">
+            <div class="tnum">${i+1}</div>
+            <div class="tbody">
+              <div class="ttitle">${t.title}</div>
+              <div class="tdesc">${t.desc}</div>
+              <div class="tsource">${t.source}</div>
+              <button class="use-btn${isVideo?' video':''}" onclick="buildPrompt(${i})">
+                ${isVideo?'Build script prompt &rarr;':'Build caption prompt &rarr;'}
+              </button>
+            </div>
+          </div>`).join('')}
+      </div>` : `<div class="locked-msg">Complete steps 1 and 3 above to unlock topics</div>`}
+    </div>
+    <div style="text-align:center;margin-top:1.75rem;padding-top:1.5rem;border-top:1px solid var(--border-light);">
+      <button onclick="resetAll()" style="font-size:12.5px;padding:8px 20px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;border:1.5px solid var(--border);background:transparent;color:var(--muted);transition:background .12s,color .12s;" onmouseover="this.style.background='var(--border-light)';this.style.color='var(--charcoal)'" onmouseout="this.style.background='transparent';this.style.color='var(--muted)'">
+        &#x21BA;&nbsp; Start over / clear all selections
+      </button>
+    </div>`;
+
+  return step1+step2+step3+step4;
+}
+
+function buildPromptUI(){
+  const isVideo=S.postType==='video';
+  const typeLabel=isVideo?'Video / Reel script prompt':'Written caption prompt';
+  const badgeClass=isVideo?'video':'written';
+  return `
+    <div class="divider"></div>
+    <button class="prompt-back" onclick="goBack()">&#8592; Back to topics</button>
+    <div class="prompt-meta">
+      <div class="prompt-label">Step 5 -- Copy and paste into any AI</div>
+      <div class="prompt-name">${S.selectedTopic}</div>
+      <div class="prompt-type-badge ${badgeClass}">${isVideo?'Video / Reel script':'Written caption'} prompt</div>
+    </div>
+    <div class="copy-row">
+      <button class="copy-btn ${badgeClass}" id="copybtn" onclick="doCopy()">Copy prompt</button>
+      <span class="copy-hint">Paste into Claude, ChatGPT, Gemini, etc.</span>
+    </div>
+    <div class="prompt-box">${escHtml(S.prompt)}</div>
+    <div class="prompt-note"><strong>How to use:</strong> Click Copy prompt above, then paste into any AI and send. All Williamston Aesthetics context is already included. Every topic and author selection produces a different prompt.</div>`;
+}
+
+// Build written caption prompt - pure plain text, no special unicode chars
+function makeWrittenPrompt(t){
+  const n=S.author==='laura'?'Laura':'Elizabeth';
+  const other=n==='Laura'?'Elizabeth':'Laura';
+  const mn=MONTHS[S.month];
+  const hasHol=S.holiday&&S.holiday!=='none';
+  const holName=hasHol?getHolLabel(S.holiday):'';
+  const holSection=hasHol
+    ? '\n\nHOLIDAY REQUIREMENT:\nThis post must reference '+holName+' directly. '+HANGLES[S.holiday]+' The '+holName+' reference must appear clearly in the caption itself -- do not write a generic post.'
+    : '';
+
+  return 'You are writing Instagram captions for '+n+', PA-C, co-owner of Williamston Aesthetics.\n\n'
+    +'--- ABOUT WILLIAMSTON AESTHETICS ---\n'
+    +'A twin PA-owned medical spa in Williamston, Michigan (small, close-knit community).\n'
+    +'Address: 147 E Grand River Ave, Suite 100, Williamston, MI 48895\n'
+    +'Phone: (810) 266-0478\n'
+    +'Co-owners: '+n+' PA-C and '+other+' PA-C (twin sisters, both licensed Physician Assistants)\n'
+    +'Services: Botox ($12/unit standard, $10/unit for VIP members), dermal fillers (from $650), microneedling (from $300), VI Peel and chemical peels (from $200), VIP membership, Botox parties and concierge events\n'
+    +'Booking: williamston-aesthetics.myaestheticrecord.com\n\n'
+    +'--- '+n.toUpperCase()+"'S WRITING VOICE ---\n"
+    +'- First person using "I" -- '+n+' is speaking directly to her followers\n'
+    +'- Warm, soft, and human -- like a text from a friend who happens to be a PA, not a brand announcement\n'
+    +'- Never corporate, never salesy, never stiff. No buzzwords or marketing language.\n'
+    +'- Short sentences. Real words. The kind of thing you would actually say out loud.\n'
+    +'- Community-focused: patients are neighbors she sees around Williamston\n'
+    +'- Philosophy: conservative, natural results -- never overfilled, never frozen\n'
+    +'- Never make specific medical outcome guarantees\n'
+    +'- Always mention "Williamston" or "Williamston, MI" somewhere naturally in the caption\n'
+    +'- DO NOT use em dashes (the long dash character like this: --). Use a comma, a period, or start a new line instead.'
+    +holSection+'\n\n'
+    +'--- POST DETAILS ---\n'
+    +'Month: '+mn+'\n'
+    +'Topic: '+t.title+'\n'
+    +'What to cover: '+t.desc+'\n'
+    +'Content inspired by: '+t.source+'\n\n'
+    +'--- YOUR TASK ---\n'
+    +'Write exactly 3 distinct Instagram captions about "'+t.title+'". Each must be genuinely different in length, opening line, angle, and style. Do NOT write generic Williamston Aesthetics content -- every caption must clearly be about this specific topic.\n\n'
+    +'CAPTION 1 - SHORT AND PUNCHY (2-3 lines):\n'
+    +'First line is a scroll-stopping hook directly about the topic.\n'
+    +'Second line delivers the key insight.\n'
+    +'Third line: simple CTA (link in bio, DM us, or book via link below).\n\n'
+    +'CAPTION 2 - WARM AND PERSONAL (one short paragraph):\n'
+    +'This one should feel like '+n+' is sitting across from someone at a coffee shop telling them something real.\n'
+    +'No lists, no bullet energy, no "as a PA I..." opener.\n'
+    +'Just a small personal moment, a patient observation, or something she genuinely thinks about.\n'
+    +'Conversational sentence rhythm. Soft. Maybe a little vulnerable.\n'
+    +'End with a low-pressure question that invites a real reply, not a generic "drop a comment below."\n\n'
+    +'CAPTION 3 - HELPFUL AND CLEAR WITH A CTA (4-5 lines):\n'
+    +'This one teaches something useful but still sounds like a person, not a pamphlet.\n'
+    +'Start with something relatable, not a statistic or a bold claim.\n'
+    +'Keep the education light and conversational -- one or two things, not a full explainer.\n'
+    +"Bring in "+n+"'s PA background naturally, not as a credential flex.\n"
+    +'Mention Williamston, MI.\n'
+    +'End with a warm, specific CTA. Not "link in bio" alone -- give them a reason to click.\n\n'
+    +'--- HASHTAGS ---\n'
+    +'For each caption, do the following:\n'
+    +'1. Start with this pool of 10 brand hashtags: '+HASHTAGS+'\n'
+    +'2. Generate 5 additional hashtags specific to this exact post topic (relevant, actually searched on Instagram, not generic filler).\n'
+    +'3. You now have 15 hashtags total. Pick the 10 you think will perform best for this specific post.\n'
+    +'4. Randomly reorder those 10 so they are never in the same sequence.\n'
+    +'5. Place that final set of 10 on a single line below the caption text.\n'
+    +'Every caption must have its own unique set and order. All 3 captions must be fully self-contained and ready to copy and paste.\n\n'
+    +'--- STORIES IDEA ---\n'
+    +'Also write one same-day Instagram Stories idea -- a poll, question box, or fill-in-the-blank related to this topic. 10 words or fewer.\n\n'
+    +'--- FORMAT YOUR RESPONSE EXACTLY LIKE THIS ---\n\n'
+    +'CAPTION 1:\n'
+    +'[caption text]\n\n'
+    +'[10 hashtags in random order]\n\n'
+    +'CAPTION 2:\n'
+    +'[caption text]\n\n'
+    +'[10 hashtags in random order]\n\n'
+    +'CAPTION 3:\n'
+    +'[caption text]\n\n'
+    +'[10 hashtags in random order]\n\n'
+    +'STORIES IDEA:\n'
+    +'[text]';
+}
+
+// Build video/reel script prompt - pure plain text
+function makeVideoPrompt(t){
+  const n=S.author==='laura'?'Laura':'Elizabeth';
+  const other=n==='Laura'?'Elizabeth':'Laura';
+  const mn=MONTHS[S.month];
+  const hasHol=S.holiday&&S.holiday!=='none';
+  const holName=hasHol?getHolLabel(S.holiday):'';
+  const holSection=hasHol
+    ? '\n\nHOLIDAY REQUIREMENT:\nThis Reel must reference '+holName+' directly. '+HANGLES[S.holiday]+' The '+holName+' reference must appear in the hook or spoken script.'
+    : '';
+
+  return 'You are writing an Instagram Reel script for '+n+', PA-C, co-owner of Williamston Aesthetics.\n\n'
+    +'--- ABOUT WILLIAMSTON AESTHETICS ---\n'
+    +'A twin PA-owned medical spa in Williamston, Michigan (small, close-knit community).\n'
+    +'Address: 147 E Grand River Ave, Suite 100, Williamston, MI 48895\n'
+    +'Phone: (810) 266-0478\n'
+    +'Co-owners: '+n+' PA-C and '+other+' PA-C (twin sisters, both licensed Physician Assistants)\n'
+    +'Services: Botox ($12/unit standard, $10/unit for VIP members), dermal fillers (from $650), microneedling (from $300), VI Peel and chemical peels (from $200), VIP membership, Botox parties and concierge events\n'
+    +'Booking: williamston-aesthetics.myaestheticrecord.com\n\n'
+    +'--- '+n.toUpperCase()+"'S ON-CAMERA VOICE ---\n"
+    +'- First person using "I" -- '+n+' speaks directly to camera\n'
+    +'- Warm, soft, and real -- like a knowledgeable friend talking to you, not presenting to you\n'
+    +'- Short sentences. Natural pauses. The kind of thing you would actually say out loud.\n'
+    +'- Never corporate, never stiff, no buzzwords or marketing language\n'
+    +'- Community-focused: she knows her patients personally in Williamston\n'
+    +'- Never make specific medical outcome guarantees\n'
+    +'- DO NOT use em dashes (the long dash character). Use a comma, a period, or a pause instead.'
+    +holSection+'\n\n'
+    +'--- REEL DETAILS ---\n'
+    +'Month: '+mn+'\n'
+    +'Topic: '+t.title+'\n'
+    +'What to cover: '+t.desc+'\n'
+    +'Content inspired by: '+t.source+'\n\n'
+    +'--- YOUR TASK ---\n'
+    +'Write a complete Instagram Reel production guide for '+n+' to film talking-to-camera about "'+t.title+'". Keep it real and speakable -- no stiff language.\n\n'
+    +'HOOK (first 1-3 seconds on screen):\n'
+    +'One punchy line that stops the scroll. Can be a question, surprising statement, or bold claim.\n\n'
+    +'SCRIPT (word-for-word, spoken to camera):\n'
+    +'Write exactly what '+n+' says. Natural pacing -- use line breaks to show pauses. Target 20-40 seconds when spoken aloud. Reference Williamston, MI naturally. End with a clear spoken CTA.\n\n'
+    +'ON-SCREEN TEXT OVERLAYS (added in Instagram editor after filming):\n'
+    +'List 4-6 text overlays with approximate timing. Format: [0-2 sec]: text here. Max 6 words per overlay.\n\n'
+    +'CAPTION (for the Instagram caption field -- not spoken):\n'
+    +'3-4 lines. Hook first. Mention Williamston, MI. Clear CTA. No hashtags in the caption body. Hashtags go on the lines directly below the caption text.\n\n'
+    +'HASHTAGS:\n'
+    +'Do the following:\n'
+    +'1. Start with this pool of 10 brand hashtags: '+HASHTAGS+'\n'
+    +'2. Generate 5 additional hashtags specific to this exact Reel topic (relevant, actually searched on Instagram, not generic filler).\n'
+    +'3. You now have 15 hashtags total. Pick the 10 you think will perform best for this specific post.\n'
+    +'4. Randomly reorder those 10 so they are never in the same sequence.\n'
+    +'5. Place that final set of 10 on a single line below the caption text.\n\n'
+    +'AUDIO SUGGESTION:\n'
+    +'Recommend original voice, trending audio, or a specific search term for Instagram audio library. Include the reason.\n\n'
+    +'--- FORMAT YOUR RESPONSE EXACTLY LIKE THIS ---\n\n'
+    +'HOOK:\n'
+    +'[text]\n\n'
+    +'SCRIPT:\n'
+    +'[text]\n\n'
+    +'ON-SCREEN TEXT:\n'
+    +'[text]\n\n'
+    +'CAPTION:\n'
+    +'[caption text]\n\n'
+    +'[10 hashtags in random order]\n\n'
+    +'AUDIO:\n'
+    +'[text]';
+}
+
+function buildPrompt(idx){
+  const t=TOPIC_SETS[S.setIdx][idx];
+  S.selectedTopic=t.title;
+  S.prompt=S.postType==='video'?makeVideoPrompt(t):makeWrittenPrompt(t);
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Robust copy using hidden textarea -- works in all browsers including local file
+function doCopy(){
+  const text=S.prompt;
+  const ta=document.getElementById('clipboardHelper');
+  ta.value=text;
+  ta.removeAttribute('readonly');
+  ta.focus();
+  ta.select();
+  ta.setSelectionRange(0,text.length);
+
+  let success=false;
+  try{
+    success=document.execCommand('copy');
+  }catch(e){}
+
+  ta.setAttribute('readonly','');
+  ta.blur();
+
+  // Also try modern API as backup
+  if(!success&&navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).catch(()=>{});
+    success=true;
+  }
+
+  const btn=document.getElementById('copybtn');
+  if(btn){
+    btn.textContent=success?'Copied!':'Select all above and copy manually';
+    btn.classList.add('copied');
+    setTimeout(()=>{
+      const b=document.getElementById('copybtn');
+      if(b){b.textContent='Copy prompt';b.classList.remove('copied');}
+    },2500);
+  }
+}
+
+function escHtml(s){
+  return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function pick(a){S.author=a;render();}
+function setMonth(i){S.month=i;S.holiday=null;render();}
+function setHol(id){S.holiday=id;render();}
+function setType(t){S.postType=t;render();}
+function rotate(){S.setIdx=(S.setIdx+1)%TOPIC_SETS.length;render();}
+function goBack(){S.prompt=null;S.selectedTopic=null;render();}
+function resetAll(){S.author=null;S.month=new Date().getMonth();S.holiday=null;S.postType=null;S.prompt=null;S.selectedTopic=null;S.freeText='';render();window.scrollTo({top:0,behavior:'smooth'});}
+function buildFreePrompt(){const txt=(S.freeText||'').trim();if(!txt)return;const t={title:txt,desc:'This is a custom topic entered by '+( S.author==='laura'?'Laura':'Elizabeth')+': '+txt,source:'Custom entry'};S.selectedTopic=txt;S.prompt=S.postType==='video'?makeVideoPrompt(t):makeWrittenPrompt(t);render();window.scrollTo({top:0,behavior:'smooth'});}
+
+render();
+</script>
+</body>
+</html>
